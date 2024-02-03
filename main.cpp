@@ -1,7 +1,11 @@
 #include <SFML/Graphics.hpp>
+
+#include <iostream>
+
 #include "src/grass/grass.h"
 #include "src/route/route.h"
-#include <iostream>
+#include "src/car/car.h"
+#include "src/car_manager/manager.h"
 
 int main () {
     // Variable
@@ -20,6 +24,7 @@ int main () {
 
     Grass grass (&window, &grassTexture);
     Route route (&window);
+    Manager manager (&window);
 
     // Running
     while (window.isOpen()) {
