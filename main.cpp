@@ -1,10 +1,11 @@
 #include <SFML/Graphics.hpp>
 #include "src/grass/grass.h"
+#include "src/route/route.h"
 #include <iostream>
 
 int main () {
     // Variable
-    sf::RenderWindow window (sf::VideoMode(1600, 900), "Traffic Simulator");
+    sf::RenderWindow window (sf::VideoMode(1920, 1080), "Traffic Simulator");
 
     sf::Texture grassTexture;
     try {
@@ -17,8 +18,9 @@ int main () {
         return -1;
     }
 
-    Route route (&window, &grassTexture);
-    
+    Grass grass (&window, &grassTexture);
+    Route route (&window);
+
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -28,7 +30,7 @@ int main () {
         }
 
         window.clear();
-        route.show();
+        grass.show(); route.show(); 
         window.display();
     }
     return 0;

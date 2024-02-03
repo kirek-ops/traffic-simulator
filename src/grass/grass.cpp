@@ -1,12 +1,12 @@
 #include "grass.h"
 
-Route::Route(sf::RenderWindow *_window, sf::Texture *_grassTexture) {
+Grass::Grass(sf::RenderWindow *_window, sf::Texture *_grassTexture) {
     window = _window;
     grassTexture = _grassTexture;
     grassSprite = sf::Sprite (*grassTexture);
 }
 
-void Route::show () {
+void Grass::show () {
     unsigned int i = 0;
     while (i < window->getSize().x) {
         unsigned int j = 0;

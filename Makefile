@@ -13,7 +13,7 @@ main.o: main.cpp
 src/grass/grass.o: src/grass/grass.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
-src/route/route.o: scr/route/route.cpp
+src/route/route.o: src/route/route.cpp
 	$(CC) $(CFLAGS) -c $< -o $@
 
 run:
