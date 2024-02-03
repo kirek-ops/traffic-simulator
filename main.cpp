@@ -21,6 +21,7 @@ int main () {
     Grass grass (&window, &grassTexture);
     Route route (&window);
 
+    // Running
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
