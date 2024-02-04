@@ -1,22 +1,37 @@
 #include "car.h"
+#include <iostream>
+#include <cmath>
 
 Car::Car () {
-    type = 0; road = 0;
+    type = -1; road = 0;
     speed = 0; max_speed = 0;
     acceleration = 0;
     x = 0; y = 0;
-    cirX = 0; cirY = 0;
 }
 
-Car::Car (int _type, int _road, float _speed, float _acceleration, float _max_speed, float _x, float _y, int _cirX, int _cirY) {
+int Radius;
+int cirX;
+int cirY;
+int RoadWidth;
+double pi;
+
+Car::Car (sf::RenderWindow *_window, int _type, int _road, float _speed, float _acceleration, float _max_speed) {
     type = _type;
     road = _road;
     speed = _speed;
     acceleration = _acceleration;
     max_speed = _max_speed;
-    x = _x;
-    y = _y;
-    cirX = _cirX; cirY = _cirY;
+    window = _window;
+
+    
+    Radius = (int)(window->getSize().x / 8);
+    cirX = (int)(window->getSize().x / 4);
+    cirY = (int)(window->getSize().y / 2) - 100;
+    RoadWidth = 120;
+    pi = std::acos(-1);    
+    
+    x = (int)(window->getSize().x) - 52;
+    y = cirY - Radius - (road + 1) * 3 - road * RoadWidth / 3;
 }
 
 void Car::setX (float x) {
@@ -49,8 +64,4 @@ void Car::changeSpeed (float speed) {
 
 float Car::getSpeed () {
     return speed;
-}
-
-void Car::move () {
-
 }

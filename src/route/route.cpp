@@ -72,7 +72,7 @@ void Route::show () {
     {
         int x = cirX;
         int y = cirY - Radius - RoadWidth / 3;
-        while (x + 20 < window->getSize().x) {
+        while (x + 20 < (int)window->getSize().x) {
             sf::VertexArray segment (sf::Lines, 2);
             segment[0].position = sf::Vector2f(x, y);
             segment[0].color = sf::Color::White;
@@ -84,7 +84,7 @@ void Route::show () {
 
         x = cirX;
         y = cirY - Radius - 2 * RoadWidth / 3;
-        while (x + 20 < window->getSize().x) {
+        while (x + 20 < (int)window->getSize().x) {
             sf::VertexArray segment (sf::Lines, 2);
             segment[0].position = sf::Vector2f(x, y);
             segment[0].color = sf::Color::White;
@@ -136,7 +136,7 @@ void Route::show () {
 
         x = cirX;
         y = cirY + Radius + RoadWidth / 3;
-        while (x + 20 < window->getSize().x) {
+        while (x + 20 < (int)window->getSize().x) {
             sf::VertexArray segment (sf::Lines, 2);
             segment[0].position = sf::Vector2f(x, y);
             segment[0].color = sf::Color::White;
@@ -148,7 +148,7 @@ void Route::show () {
 
         x = cirX;
         y = cirY + Radius + 2 * RoadWidth / 3;
-        while (x + 20 < window->getSize().x) {
+        while (x + 20 < (int)window->getSize().x) {
             sf::VertexArray segment (sf::Lines, 2);
             segment[0].position = sf::Vector2f(x, y);
             segment[0].color = sf::Color::White;

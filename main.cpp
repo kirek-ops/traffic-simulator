@@ -36,7 +36,8 @@ int main () {
         }
 
         window.clear();
-        grass.show(); route.show(); 
+        grass.show(); 
+        route.show();
         window.display();
     }
     return 0;

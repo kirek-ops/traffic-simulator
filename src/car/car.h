@@ -7,11 +7,11 @@ class Car {
         int road;
         float speed, acceleration, max_speed;
         float x, y;
-        int cirX, cirY;
+        sf::RenderWindow *window;
 
     public:
         Car ();
-        Car (int _type, int _road, float _speed, float _acceleration, float _max_speed, float _x, float _y, int _cirX, int _cirY);
+        Car (sf::RenderWindow *_window, int _type, int _road, float _speed, float _acceleration, float _max_speed);
 
         void setX (float x);
         void setY (float y);
@@ -23,6 +23,4 @@ class Car {
 
         void changeSpeed (float speed);
         float getSpeed ();
-
-        void move ();
 };
