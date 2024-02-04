@@ -15,7 +15,7 @@ void Manager::create () {
     std::uniform_int_distribution <int> distribution (0, 2);
 
     int road = distribution(gen);
-    Car newCar (window, 0, road, 5, 0.5, 10);
+    Car newCar (window, 0, road, 5, 1, 10);
 
     cars.push_back(newCar);
 }
