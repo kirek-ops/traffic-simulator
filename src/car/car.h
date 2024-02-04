@@ -8,6 +8,12 @@ class Car {
         float speed, acceleration, max_speed;
         float x, y;
         sf::RenderWindow *window;
+        float rotation;
+
+        int part_of_route; // -1 = undefined
+                           //  0 = top straight
+                           //  1 = half circle
+                           //  2 = bottom straight
 
     public:
         Car ();
@@ -23,4 +29,8 @@ class Car {
 
         void changeSpeed (float speed);
         float getSpeed ();
+
+        bool move ();
+
+        ~Car ();
 };

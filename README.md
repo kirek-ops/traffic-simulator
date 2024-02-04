@@ -1,2 +1,2 @@
 # traffic-simulator
-Traffic Simulator
+Simple Traffic Simulator on C++ using SFML

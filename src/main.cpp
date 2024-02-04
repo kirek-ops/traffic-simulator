@@ -1,6 +1,8 @@
 #include <SFML/Graphics.hpp>
 
 #include <iostream>
+#include <chrono>
+#include <ctime>
 
 #include "grass/grass.h"
 #include "route/route.h"
@@ -24,7 +26,11 @@ int main () {
 
     Grass grass (&window, &grassTexture);
     Route route (&window);
-    Manager manager (&window);
+
+    auto curTime = std::chrono::system_clock::now();
+    std::time_t startTime = std::chrono::system_clock::to_time_t(curTime);
+
+    Manager manager (&window, startTime);
 
     // Running
     while (window.isOpen()) {
@@ -36,8 +42,11 @@ int main () {
         }
 
         window.clear();
+        
         grass.show(); 
         route.show();
+        manager.process();
+
         window.display();
     }
     return 0;

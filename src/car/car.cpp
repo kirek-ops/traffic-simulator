@@ -7,6 +7,7 @@ Car::Car () {
     speed = 0; max_speed = 0;
     acceleration = 0;
     x = 0; y = 0;
+    part_of_route = -1;
 }
 
 int Radius;
@@ -22,16 +23,29 @@ Car::Car (sf::RenderWindow *_window, int _type, int _road, float _speed, float _
     acceleration = _acceleration;
     max_speed = _max_speed;
     window = _window;
-
+    rotation = 270;
     
     Radius = (int)(window->getSize().x / 8);
     cirX = (int)(window->getSize().x / 4);
     cirY = (int)(window->getSize().y / 2) - 100;
     RoadWidth = 120;
-    pi = std::acos(-1);    
+    pi = std::acos(-1); 
+
+    part_of_route = 0;   
     
     x = (int)(window->getSize().x) - 52;
-    y = cirY - Radius - (road + 1) * 3 - road * RoadWidth / 3;
+    if (road == 0) {
+        y = cirY - Radius - 10 - road * RoadWidth / 3;
+    }
+    else if (road == 1) {
+        y = cirY - Radius - 10 - road * RoadWidth / 3;
+    }
+    else if (road == 2) {
+        y = cirY - Radius - 10 - road * RoadWidth / 3;
+    }
+    else {
+        exit(-1);
+    }
 }
 
 void Car::setX (float x) {
@@ -64,4 +78,59 @@ void Car::changeSpeed (float speed) {
 
 float Car::getSpeed () {
     return speed;
+}
+
+bool Car::move () {
+    if (type == 0) {
+        sf::Texture texture;
+        try {
+            if (!texture.loadFromFile("images/car1.png")) {
+                throw std::invalid_argument("Failed Loading From File");
+            }
+        }
+        catch (const std::exception &e) {
+            std::cerr << "Exception: " << e.what() << std::endl;
+            exit(-1);
+        }
+
+        sf::Sprite sprite (texture);
+        sprite.setPosition(x, y);
+        sprite.setRotation(rotation);
+        window->draw(sprite);
+        
+        if (part_of_route == 0) {
+            x -= speed;
+            speed = std::min(max_speed, speed + acceleration);
+        }
+        else if (part_of_route == 1) {
+            x = cirX + 1;
+            y = cirY + Radius + 7 + road * RoadWidth / 3;
+        }
+        else if (part_of_route == 2) {
+            x += speed;
+            speed = std::min(max_speed, speed + acceleration);
+        }
+        else {
+            exit(-1);
+        }
+
+        // change part of route
+        if (x < cirX && y < cirY && part_of_route != 1) {
+            part_of_route = 1;
+        }
+        else if (x > cirX && y > cirY && part_of_route != 2) {
+            part_of_route = 2;
+            rotation = 90;
+        }
+        else if (x > window->getSize().x) {
+            part_of_route = -1;
+            return 0;
+        }
+
+        return 1;
+    }
+}
+
+Car::~Car () {
+    
 }

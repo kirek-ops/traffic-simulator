@@ -5,7 +5,6 @@ SFML_LIBS := -lsfml-graphics -lsfml-window -lsfml-system
 SRC_DIR := src
 OBJ_DIR := obj
 
-# List of source files
 SRC_FILES := $(wildcard $(SRC_DIR)/**/*.cpp $(SRC_DIR)/*.cpp)
 OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC_FILES))
 
