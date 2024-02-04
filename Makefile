@@ -2,28 +2,25 @@ CC := g++
 CFLAGS := -std=c++17 -Wall
 SFML_LIBS := -lsfml-graphics -lsfml-window -lsfml-system
 
+SRC_DIR := src
+OBJ_DIR := obj
+
+# List of source files
+SRC_FILES := $(wildcard $(SRC_DIR)/**/*.cpp $(SRC_DIR)/*.cpp)
+OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC_FILES))
+
 all: main run clean
 
-main: main.o src/grass/grass.o src/route/route.o src/car/car.o src/car_manager/manager.o
+main: $(OBJ_FILES)
 	$(CC) $(CFLAGS) -o main $^ $(SFML_LIBS)
 
-main.o: main.cpp
-	$(CC) $(CFLAGS) -c $<
-
-src/grass/grass.o: src/grass/grass.cpp
-	$(CC) $(CFLAGS) -c $< -o $@
-
-src/route/route.o: src/route/route.cpp
-	$(CC) $(CFLAGS) -c $< -o $@
-
-src/car/car.o: src/car/car.cpp
-	$(CC) $(CFLAGS) -c $< -o $@
-
-src/car_manager/manager.o: src/car_manager/manager.cpp
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 run:
 	./main
 
 clean:
-	rm -f main main.o src/grass/grass.o src/route/route.o src/car/car.o src/car_manager/manager.o
+	rm -f main $(OBJ_DIR)/**/*.o $(OBJ_DIR)/*.o
+	find $(OBJ_DIR) -type d -empty -delete

@@ -2,10 +2,10 @@
 
 #include <iostream>
 
-#include "src/grass/grass.h"
-#include "src/route/route.h"
-#include "src/car/car.h"
-#include "src/car_manager/manager.h"
+#include "grass/grass.h"
+#include "route/route.h"
+#include "car/car.h"
+#include "car_manager/manager.h"
 
 int main () {
     // Variable
