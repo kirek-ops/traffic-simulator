@@ -9,9 +9,10 @@ class Manager {
         sf::RenderWindow *window;
         std::vector <Car> cars;
         std::time_t start;
-        int lst_gen = -1;
+        std::time_t lst_gen;
+
     public:
         Manager (sf::RenderWindow *_window, std::time_t _start);
-        void create ();
+        void create (int road);
         void process ();
 };

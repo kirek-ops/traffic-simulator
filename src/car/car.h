@@ -4,7 +4,7 @@
 class Car {
     private:
         int type;
-        int road;
+        float road;
         float speed, acceleration, max_speed;
         float x, y;
         sf::RenderWindow *window;
@@ -14,6 +14,9 @@ class Car {
                            //  0 = top straight
                            //  1 = half circle
                            //  2 = bottom straight
+
+        bool smooth_change_road;
+        int to_road;
 
     public:
         Car ();

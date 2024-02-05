@@ -8,6 +8,7 @@ Car::Car () {
     acceleration = 0;
     x = 0; y = 0;
     part_of_route = -1;
+    smooth_change_road = 0; to_road = -1;
 }
 
 int Radius;
@@ -24,7 +25,8 @@ Car::Car (sf::RenderWindow *_window, int _type, int _road, float _speed, float _
     max_speed = _max_speed;
     window = _window;
     rotation = 270;
-    
+    smooth_change_road = 0; to_road = -1;
+
     Radius = (int)(window->getSize().x / 8);
     cirX = (int)(window->getSize().x / 4);
     cirY = (int)(window->getSize().y / 2) - 100;
@@ -54,7 +56,8 @@ float Car::getY () {
 }
 
 void Car::changeRoad (int road) {
-    this->road = road;
+    to_road = road;
+    smooth_change_road = 1;
 }
 
 int Car::getRoad () {
@@ -96,7 +99,7 @@ bool Car::move () {
             rotation -= omega;
             x = cirX - (Radius + 5 + road * RoadWidth / 3) * std::cos((rotation - 180) / 180 * pi);
             y = cirY - (Radius + 10 + road * RoadWidth / 3) * std::sin((rotation - 180) / 180 * pi);
-            speed = std::min(max_speed, std::max((float)0, speed + acceleration));
+            speed = std::min(max_speed, speed + acceleration);
         }
         else if (part_of_route == 2) {
             x += speed;
@@ -109,7 +112,6 @@ bool Car::move () {
         // change part of route
         if (x - speed < cirX && y < cirY && part_of_route != 1) {
             part_of_route = 1;
-            acceleration = -acceleration / 50;
         }
         else if (x > cirX && y > cirY && part_of_route != 2) {
             part_of_route = 2;
