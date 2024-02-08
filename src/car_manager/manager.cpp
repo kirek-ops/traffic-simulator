@@ -2,6 +2,7 @@
 #include <cmath>
 #include <random>
 #include <iostream>
+#include <ctime>
 
 std::mt19937 gen (1337);
 
@@ -14,28 +15,21 @@ Manager::Manager (sf::RenderWindow *_window, std::time_t _start) {
 }
 
 void Manager::create (int road) {
-    std::uniform_real_distribution <double> dist (1, 100);
-    double speed0 = dist(gen);
-    double acceleration = dist(gen);
+    std::uniform_real_distribution <double> dist (10, 12);
+    double speed0 = dist(gen) - 10;
+    double acceleration = std::max((double)0.01, dist(gen) - 11.5);
 
     std::cout << speed0 << " " << acceleration << std::endl;
 
-    Car newCar (window, 0, road, speed0, acceleration, 10);
+    Car newCar (window, 0, road, speed0, acceleration, 5);
     cars.push_back(newCar);
 }
 
-const float COUNTDOWN = 1;
-
 void Manager::process () {
-    auto timer = std::chrono::system_clock::now();
-    std::time_t curTime = std::chrono::system_clock::to_time_t(timer);
-    
-    if (curTime - lst_gen > COUNTDOWN) {
-        int road1 = distribution(gen);
-        create(road1); 
-        int road2 = distribution(gen);
-        while (road2 == road1) road2 = distribution(gen);
-        create(road2);
+    std::time_t curTime = clock();
+
+    if (!lst_gen || (float)(curTime - lst_gen) / CLOCKS_PER_SEC > 0.4) {
+        create(rand() % 3);
         lst_gen = curTime;
     }
 
