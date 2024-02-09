@@ -17,12 +17,25 @@ Manager::Manager (sf::RenderWindow *_window, std::time_t _start) {
 void Manager::create (int road) {
     std::uniform_real_distribution <double> dist (10, 12);
     double speed0 = dist(gen) - 10;
-    double acceleration = std::max((double)0.01, dist(gen) - 11.5);
+    double acceleration = std::max((double)0.005, dist(gen) - 11.5);
 
     std::cout << speed0 << " " << acceleration << std::endl;
 
     Car newCar (window, 0, road, speed0, acceleration, 5);
     cars.push_back(newCar);
+}
+
+double dist (float x, float y, float xx, float yy) {
+    return (x - xx) * (x - xx) + (y - yy) * (y - yy);
+}
+
+bool Manager::is_around_car (int car) {
+    for (int i = 0; i < cars.size(); ++i) {
+        if (i == car || cars[i].getRoad() != cars[car].getRoad()) continue;
+        if (dist(cars[car].getX(), cars[car].getY(), cars[i].getX(), cars[i].getY()) <= 15000) {
+            cars[car].extreme_stop();
+        }
+    }
 }
 
 void Manager::process () {
@@ -34,6 +47,9 @@ void Manager::process () {
     }
 
     for (int i = 0; i < cars.size(); ++i) {
+        if (is_around_car(i)) {
+
+        }
         if (!cars[i].move()) {
             std::swap(cars[i], cars.back()); 
             cars.pop_back();

@@ -64,12 +64,20 @@ int Car::getRoad () {
     return road;
 }
 
+int Car::get_part_of_route () {
+    return part_of_route;
+}
+
 void Car::changeSpeed (float speed) {
     this->speed = speed;
 }
 
 float Car::getSpeed () {
     return speed;
+}
+
+void Car::extreme_stop () {
+    
 }
 
 bool Car::move () {

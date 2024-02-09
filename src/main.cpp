@@ -4,8 +4,9 @@
 #include <chrono>
 #include <ctime>
 
-#include "grass/grass.h"
-#include "route/route.h"
+// #include "grass/grass.h"
+// #include "route/route.h"
+
 #include "car/car.h"
 #include "car_manager/manager.h"
 
@@ -13,9 +14,9 @@ int main () {
     // Variable
     sf::RenderWindow window (sf::VideoMode(1920, 1080), "Traffic Simulator");
 
-    sf::Texture grassTexture;
+    sf::Texture backgroundTexture;
     try {
-        if (!grassTexture.loadFromFile("images/grass.png")) {
+        if (!backgroundTexture.loadFromFile("images/background.png")) {
             throw std::invalid_argument("Failed Loading From File");
         }
     }
@@ -24,13 +25,7 @@ int main () {
         return -1;
     }
 
-    Grass grass (&window, &grassTexture);
-    Route route (&window);
-
-    auto curTime = std::chrono::system_clock::now();
-    std::time_t startTime = std::chrono::system_clock::to_time_t(curTime);
-
-    Manager manager (&window, startTime);
+    sf::Sprite background (backgroundTexture);
 
     // Running
     while (window.isOpen()) {
@@ -42,10 +37,8 @@ int main () {
         }
 
         window.clear();
-        
-        grass.show(); 
-        route.show();
-        manager.process();
+
+        window.draw(background);
 
         window.display();
     }

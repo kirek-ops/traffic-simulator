@@ -35,5 +35,11 @@ class Car {
 
         bool move ();
 
+        int get_part_of_route ();
+
+        void extreme_stop ();
+
         ~Car ();
+
+    friend class Manager;
 };
