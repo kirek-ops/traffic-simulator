@@ -31,8 +31,8 @@ double dist (float x, float y, float xx, float yy) {
 
 bool Manager::is_around_car (int car) {
     for (int i = 0; i < cars.size(); ++i) {
-        if (i == car || cars[i].getRoad() != cars[car].getRoad()) continue;
-        if (dist(cars[car].getX(), cars[car].getY(), cars[i].getX(), cars[i].getY()) <= 15000) {
+        if (i == car || cars[i].road != cars[car].road) continue;
+        if (dist(cars[car].x, cars[car].y, cars[i].x, cars[i].y) <= 15000) {
             cars[car].extreme_stop();
         }
     }

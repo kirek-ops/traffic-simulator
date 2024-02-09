@@ -27,6 +27,8 @@ int main () {
 
     sf::Sprite background (backgroundTexture);
 
+    Manager manager (&window, clock());
+
     // Running
     while (window.isOpen()) {
         sf::Event event;
@@ -39,6 +41,7 @@ int main () {
         window.clear();
 
         window.draw(background);
+        manager.process();
 
         window.display();
     }
