@@ -8,11 +8,11 @@ class Manager {
     private:
         sf::RenderWindow *window;
         std::vector <Car> cars;
-        std::time_t start;
-        std::time_t lst_gen = 0;
+        time_t start;
+        time_t lst_gen = 0;
 
     public:
-        Manager (sf::RenderWindow *_window, std::time_t _start);
+        Manager (sf::RenderWindow *_window, time_t _start);
         void create (int road);
         void process ();
         bool is_around_car (int car);
