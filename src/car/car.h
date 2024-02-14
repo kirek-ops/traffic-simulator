@@ -19,6 +19,7 @@ class Car {
 
         time_t extreme_stop_time = -1;
         float after_stop_acceleration;
+        float *after_stop_speed;
 
     public:
         Car ();

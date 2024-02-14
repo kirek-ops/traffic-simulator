@@ -17,9 +17,9 @@ Manager::Manager (sf::RenderWindow *_window, time_t _start) {
 
 
 void Manager::create (int road) {
-    std::uniform_real_distribution <double> dist (0.2, 0.4);
-    double speed0 = dist(gen) + (dist(gen) - 0.35);
-    double acceleration = 0.0005;
+    std::uniform_real_distribution <double> dist (0.1, 0.3);
+    double speed0 = dist(gen);
+    double acceleration = 0.0003;
 
     Car newCar (window, 0, road, speed0, acceleration);
 
@@ -48,7 +48,7 @@ std::pair <double, Car> Manager::check_around (int car) {
 
 void Manager::process () {
     std::time_t curTime = clock();
-    static int ok = 0;
+    // static int ok = 0;
 
     // if (!lst_gen) {
     //     Car car (window, 0, 0, 0.1, 0.00001);
@@ -62,7 +62,7 @@ void Manager::process () {
     //     ok = 1;
     // }
 
-    if (!lst_gen || (float)(curTime - lst_gen) / CLOCKS_PER_SEC > 0.1) {
+    if (!lst_gen || (float)(curTime - lst_gen) / CLOCKS_PER_SEC > 0.2) {
         create(rand() % 3); 
         lst_gen = curTime;
     }

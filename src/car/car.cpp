@@ -43,6 +43,8 @@ void Car::extreme_stop (double dist, Car car) {
     acceleration = (car.speed - speed) / time + car.acceleration;
     // std::cout << "STOP!!!" << dist << " " << time << " " << acceleration << " " << speed << " " << car.speed << std::endl;
     extreme_stop_time = clock() + time;
+    after_stop_acceleration = car.acceleration;
+    after_stop_speed = &car.speed;
 }
 
 double Car::dist (const Car &other) { // 12345678 invalid result
@@ -148,7 +150,8 @@ bool Car::move () {
     // std::cout << clock() << " " << x << " " << y << " " << speed << " " << acceleration << " " << part_of_route << " " << rotation << std::endl;
 
     if (clock() >= extreme_stop_time && extreme_stop_time != -1) {
-        acceleration = 0.0005;
+        acceleration = after_stop_acceleration;
+        speed = *after_stop_speed;
         extreme_stop_time = -1;
     }
 
