@@ -21,6 +21,9 @@ class Car {
         float after_stop_acceleration;
         float *after_stop_speed;
 
+        time_t click_stop_time = -1;
+        float mem_speed;
+
     public:
         Car ();
         Car (sf::RenderWindow *_window, int _type, int _road, float _speed, float _acceleration);

@@ -16,4 +16,6 @@ class Manager {
         void create (int road);
         void process ();
         std::pair <double, Car> check_around (int car);
+        int check_car (int x, int y);
+        void stop_car (int id);
 };

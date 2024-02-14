@@ -36,7 +36,17 @@ int main () {
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
+            else if (event.type == sf::Event::MouseButtonPressed) {
+                if (event.mouseButton.button == sf::Mouse::Left) {
+                    sf::Vector2i click = sf::Mouse::getPosition(window);
+                    int id = manager.check_car(click.x, click.y);
+                    if (id != -1) {
+                        manager.stop_car(id);
+                    }
+                }
+            }
         }
+
 
         window.clear();
 

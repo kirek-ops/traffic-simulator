@@ -14,8 +14,6 @@ Manager::Manager (sf::RenderWindow *_window, time_t _start) {
     lst_gen = 0;
 }
 
-
-
 void Manager::create (int road) {
     std::uniform_real_distribution <double> dist (0.1, 0.3);
     double speed0 = dist(gen);
@@ -44,6 +42,21 @@ std::pair <double, Car> Manager::check_around (int car) {
         }
     }
     return best;
+}
+
+int Manager::check_car (int x, int y) {
+    for (int i = 0; i < cars.size(); ++i) {
+        if (abs(x - cars[i].x) < 30 && abs(y - cars[i].y) < 15) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void Manager::stop_car (int id) {
+    cars[id].mem_speed = cars[id].speed;
+    cars[id].speed = 0.01;
+    cars[id].click_stop_time = clock() + CLOCKS_PER_SEC * 2;
 }
 
 void Manager::process () {

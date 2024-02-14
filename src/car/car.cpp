@@ -120,8 +120,6 @@ bool Car::move () {
 
     sprite.setPosition(x, y);
     sprite.setRotation(rotation);
-
-    sf::CircleShape cen (10); cen.setPosition(cirX, cirY); window->draw(cen);
     
     window->draw(sprite);
 
@@ -153,6 +151,10 @@ bool Car::move () {
         acceleration = after_stop_acceleration;
         speed = *after_stop_speed;
         extreme_stop_time = -1;
+    }
+    if (clock() >= click_stop_time && click_stop_time != -1) {
+        speed = mem_speed;
+        click_stop_time = -1;
     }
 
     // change part of route
