@@ -55,14 +55,14 @@ int Manager::check_car (int x, int y) {
 
 void Manager::stop_car (int id) {
     cars[id].mem_speed = cars[id].speed;
-    cars[id].speed = 0.01;
+    cars[id].speed = 0.05;
     cars[id].click_stop_time = clock() + CLOCKS_PER_SEC * 2;
 }
 
 void Manager::process () {
     std::time_t curTime = clock();
+    
     // static int ok = 0;
-
     // if (!lst_gen) {
     //     Car car (window, 0, 0, 0.1, 0.00001);
     //     cars.push_back(car);
