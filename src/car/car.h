@@ -4,7 +4,7 @@
 class Car {
     private:
         float road;
-        float speed, acceleration, max_speed;
+        float speed, acceleration;
         float x, y;
         sf::RenderWindow *window;
         float rotation;
@@ -17,12 +17,12 @@ class Car {
         bool smooth_change_road;
         int to_road;
 
-        time_t extreme_stop_time;
+        time_t extreme_stop_time = -1;
         float after_stop_acceleration;
 
     public:
         Car ();
-        Car (sf::RenderWindow *_window, int _type, int _road, float _speed, float _acceleration, float _max_speed);
+        Car (sf::RenderWindow *_window, int _type, int _road, float _speed, float _acceleration);
 
         bool move ();
         void extreme_stop (double dist, Car car);

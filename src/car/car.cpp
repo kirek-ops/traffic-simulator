@@ -4,7 +4,7 @@
 
 Car::Car () {
     road = 0;
-    speed = 0; max_speed = 0;
+    speed = 0;
     acceleration = 0;
     x = 0; y = 0;
     part_of_route = -1;
@@ -17,11 +17,10 @@ int cirY;
 int RoadWidth;
 double pi;
 
-Car::Car (sf::RenderWindow *_window, int _type, int _road, float _speed, float _acceleration, float _max_speed) {
+Car::Car (sf::RenderWindow *_window, int _type, int _road, float _speed, float _acceleration) {
     road = _road;
     speed = _speed;
     acceleration = _acceleration;
-    max_speed = _max_speed;
     window = _window;
     rotation = 270;
     smooth_change_road = 0; to_road = -1;
@@ -39,12 +38,14 @@ Car::Car (sf::RenderWindow *_window, int _type, int _road, float _speed, float _
 }
 
 void Car::extreme_stop (double dist, Car car) {
-    extreme_stop_time = clock() + CLOCKS_PER_SEC * 2 / 3 * (80 - dist) / (car.speed - speed);
-    acceleration = (car.speed - speed) / (2 / 3 * (80 - dist) / (car.speed - speed)) + car.acceleration;
-    after_stop_acceleration = car.acceleration;
+    double time = 2 * (65 - dist) / (car.speed - speed);
+    if (time < 0.0000000001) return;
+    acceleration = (car.speed - speed) / time + car.acceleration;
+    // std::cout << "STOP!!!" << dist << " " << time << " " << acceleration << " " << speed << " " << car.speed << std::endl;
+    extreme_stop_time = clock() + time;
 }
 
-double Car::dist (const Car &other) {
+double Car::dist (const Car &other) { // 12345678 invalid result
     double result = 12345678;
     if (part_of_route == 0) {
         switch (other.part_of_route) {
@@ -53,10 +54,10 @@ double Car::dist (const Car &other) {
                 if (result < 0) result = 12345678;
                 break;
             case 1: 
-                result = (x - cirX) + -atan2((cirX - other.x) / Radius, (cirY - other.y) / Radius) * Radius;
+                result = 12345678;
                 break;
             case 2: 
-                result = Radius * pi + x - cirX + other.x - cirX;
+                result = 12345678;
             default:
                 break;
         }
@@ -64,13 +65,14 @@ double Car::dist (const Car &other) {
     else if (part_of_route == 1) {
         switch (other.part_of_route) {
             case 0:
-                result = 12345678;
+                result = other.x - cirX + (270 - rotation) / 180 * pi * Radius;
                 break;
             case 1: 
-                result = -atan2((cirX - other.x) / Radius, (cirY - other.y) / Radius) * Radius - (-atan2((cirX - x) / Radius, (cirY - y) / Radius) * Radius);
+                result = (other.rotation - rotation) / 180 * pi * Radius;
+                if (result < 0) result = 12345678;
                 break;
             case 2:
-                result = pi * Radius - (-atan2((cirX - x) / Radius, (cirY - y) / Radius) * Radius) + other.x - cirX;
+                result = 12345678;
                 break;
             default:
                 break;
@@ -79,13 +81,14 @@ double Car::dist (const Car &other) {
     else if (part_of_route == 2) {
         switch (other.part_of_route) {
             case 0:
-                result = 12345678;
+                result = pi * Radius + x + other.x - cirX * 2;
                 break;
             case 1: 
-                result = 12345678;
+                result = x - cirX + (other.rotation - 90) / 180 * pi * Radius;
                 break;
             case 2:
-                result = other.x - x;
+                result = x - other.x;
+                if (result < 0) result = 12345678;
                 break;
             default:
                 break;
@@ -119,31 +122,34 @@ bool Car::move () {
     sf::CircleShape cen (10); cen.setPosition(cirX, cirY); window->draw(cen);
     
     window->draw(sprite);
-    
+
     float omega;
 
     switch (part_of_route) {
         case 0:
             x -= speed;
-            speed = std::min(max_speed, speed + acceleration);
+            speed = speed + acceleration;
             break;
         case 1:
             omega = speed / Radius / pi * 180;
             rotation -= omega;
             x = cirX - (Radius + 20 + road * RoadWidth / 3) * std::cos((rotation - 180) / 180 * pi);
             y = cirY - (Radius + 20 + road * RoadWidth / 3) * std::sin((rotation - 180) / 180 * pi);
-            speed = std::min(max_speed, speed + acceleration);
+            speed = speed + acceleration;
             break;
         case 2:
             x += speed;
-            speed = std::min(max_speed, speed + acceleration);
+            speed = speed + acceleration;
             break;
         default:
             exit(-1);
     }
 
-    if (clock() == extreme_stop_time) {
-        acceleration = after_stop_acceleration;
+    // std::cout << clock() << " " << x << " " << y << " " << speed << " " << acceleration << " " << part_of_route << " " << rotation << std::endl;
+
+    if (clock() >= extreme_stop_time && extreme_stop_time != -1) {
+        acceleration = 0.0005;
+        extreme_stop_time = -1;
     }
 
     // change part of route

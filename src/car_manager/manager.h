@@ -15,5 +15,5 @@ class Manager {
         Manager (sf::RenderWindow *_window, time_t _start);
         void create (int road);
         void process ();
-        bool is_around_car (int car);
+        std::pair <double, Car> check_around (int car);
 };

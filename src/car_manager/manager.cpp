@@ -14,16 +14,17 @@ Manager::Manager (sf::RenderWindow *_window, time_t _start) {
     lst_gen = 0;
 }
 
+
+
 void Manager::create (int road) {
-    std::uniform_real_distribution <double> dist (10, 12);
-    double speed0 = dist(gen) - 10;
-    double acceleration = std::max((double)0.005, dist(gen) - 11.5);
+    std::uniform_real_distribution <double> dist (0.2, 0.4);
+    double speed0 = dist(gen) + (dist(gen) - 0.35);
+    double acceleration = 0.0005;
 
-    std::cout << speed0 << " " << acceleration << std::endl;
-
-    Car newCar (window, 0, road, speed0, acceleration, 5);
+    Car newCar (window, 0, road, speed0, acceleration);
 
     for (int i = 0; i < cars.size(); ++i) {
+        if (cars[i].road != road) continue;
         if (cars[i].dist(newCar) < 80) {
             return;
         }
@@ -32,31 +33,52 @@ void Manager::create (int road) {
     cars.push_back(newCar);
 }
 
-bool Manager::is_around_car (int car) {
-    for (int i = 0; i < cars.size(); ++i) {
-        if (i == car || cars[i].road != cars[car].road) continue;
-        double d = cars[car].dist(cars[i]);
-        if (d < 80) {
-            cars[car].extreme_stop(d, cars[i]);
+std::pair <double, Car> Manager::check_around (int car) {
+    std::pair <double, Car> best = {12345678, Car ()};
+    for (int i = 0; i < cars.size(); ++i) { 
+        if (cars[i].road != cars[car].road || i == car) continue;
+        double d = cars[i].dist(cars[car]);
+        if (d < 80 && best.first > d) {
+            // std::cout << cars[car].speed << " " << cars[i].speed << " " << cars[car].extreme_stop_time << " " << cars[i].extreme_stop_time << std::endl; 
+            best = {d, cars[i]};
         }
     }
+    return best;
 }
 
 void Manager::process () {
     std::time_t curTime = clock();
+    static int ok = 0;
 
-    if (!lst_gen || (float)(curTime - lst_gen) / CLOCKS_PER_SEC > 0.2) {
-        create(rand() % 3);
+    // if (!lst_gen) {
+    //     Car car (window, 0, 0, 0.1, 0.00001);
+    //     cars.push_back(car);
+    //     lst_gen = curTime;
+    // }
+    // else if ((float)(curTime - lst_gen) / CLOCKS_PER_SEC > 0.6 && !ok) {
+    //     Car car (window, 0, 0, 0.2, 0.00001);
+    //     cars.push_back(car);
+    //     lst_gen = curTime;
+    //     ok = 1;
+    // }
+
+    if (!lst_gen || (float)(curTime - lst_gen) / CLOCKS_PER_SEC > 0.1) {
+        create(rand() % 3); 
         lst_gen = curTime;
     }
 
+    // if (cars.size() > 1) {
+    //     std::cout << cars[0].dist(cars[1]) << std::endl;
+    // }
+
     for (int i = 0; i < cars.size(); ++i) {
-        is_around_car(i);
+        auto [d, car] = check_around(i);
+        if (d < 80) {
+            cars[i].extreme_stop(d, car);
+        }
         if (!cars[i].move()) {
-            std::swap(cars[i], cars.back()); 
-            cars.pop_back();
+            cars.erase(cars.begin() + i, cars.begin() + i + 1);
+            --i;
         }
     } 
-
-    sf::sleep(sf::milliseconds(10));
 }
