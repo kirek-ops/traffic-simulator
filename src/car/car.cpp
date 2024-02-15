@@ -153,7 +153,7 @@ bool Car::move () {
         extreme_stop_time = -1;
     }
     if (clock() >= click_stop_time && click_stop_time != -1) {
-        speed = mem_speed;
+        acceleration = mem_acceleration;
         click_stop_time = -1;
     }
 

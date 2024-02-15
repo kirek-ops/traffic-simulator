@@ -53,6 +53,8 @@ int main () {
         window.draw(background);
         manager.process();
 
+        // std::cout << "CUR TIME" << clock() << std::endl;
+
         window.display();
     }
     return 0;

@@ -16,14 +16,14 @@ Manager::Manager (sf::RenderWindow *_window, time_t _start) {
 
 void Manager::create (int road) {
     std::uniform_real_distribution <double> dist (0.1, 0.3);
-    double speed0 = dist(gen);
-    double acceleration = 0.0003;
+    double speed0 = dist(gen); 
+    double acceleration = 0.00003;
 
     Car newCar (window, 0, road, speed0, acceleration);
 
     for (int i = 0; i < cars.size(); ++i) {
         if (cars[i].road != road) continue;
-        if (cars[i].dist(newCar) < 80) {
+        if (cars[i].dist(newCar) < 100) {
             return;
         }
     }
@@ -37,7 +37,7 @@ std::pair <double, Car> Manager::check_around (int car) {
         if (cars[i].road != cars[car].road || i == car) continue;
         double d = cars[i].dist(cars[car]);
         if (d < 80 && best.first > d) {
-            // std::cout << cars[car].speed << " " << cars[i].speed << " " << cars[car].extreme_stop_time << " " << cars[i].extreme_stop_time << std::endl; 
+            // std::cout << car << " " << i << " " << cars[car].x << " " << cars[i].x << " " << cars[car].speed << " " << cars[i].speed << " " << cars[car].extreme_stop_time << " " << cars[i].extreme_stop_time << std::endl; 
             best = {d, cars[i]};
         }
     }
@@ -46,7 +46,7 @@ std::pair <double, Car> Manager::check_around (int car) {
 
 int Manager::check_car (int x, int y) {
     for (int i = 0; i < cars.size(); ++i) {
-        if (abs(x - cars[i].x) < 30 && abs(y - cars[i].y) < 15) {
+        if (abs(x - cars[i].x) < 25 && abs(y - cars[i].y) < 12) {
             return i;
         }
     }
@@ -54,9 +54,11 @@ int Manager::check_car (int x, int y) {
 }
 
 void Manager::stop_car (int id) {
-    cars[id].mem_speed = cars[id].speed;
+    cars[id].mem_acceleration = cars[id].acceleration;
     cars[id].speed = 0.05;
-    cars[id].click_stop_time = clock() + CLOCKS_PER_SEC * 2;
+    cars[id].click_stop_time = clock() + CLOCKS_PER_SEC / 30;
+    // std::cout << "STOPPED " << cars[id].click_stop_time << std::endl;
+    // exit(-1);
 }
 
 void Manager::process () {
@@ -75,7 +77,7 @@ void Manager::process () {
     //     ok = 1;
     // }
 
-    if (!lst_gen || (float)(curTime - lst_gen) / CLOCKS_PER_SEC > 0.2) {
+    if (!lst_gen || (float)(curTime - lst_gen) / CLOCKS_PER_SEC > 0.3) {
         create(rand() % 3); 
         lst_gen = curTime;
     }

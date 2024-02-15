@@ -22,7 +22,7 @@ class Car {
         float *after_stop_speed;
 
         time_t click_stop_time = -1;
-        float mem_speed;
+        float mem_acceleration;
 
     public:
         Car ();
