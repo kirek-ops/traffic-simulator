@@ -35,7 +35,13 @@ std::pair <double, Car> Manager::check_around (int car) {
     std::pair <double, Car> best = {12345678, Car ()};
     for (int i = 0; i < cars.size(); ++i) { 
         if (cars[i].road != cars[car].road || i == car) continue;
-        double d = cars[i].dist(cars[car]);
+        double d = 12345678;
+        if (cars[car].speed > 0) {
+            d = cars[i].dist(cars[car]);
+        }
+        else {
+            d = cars[car].dist(cars[i]);
+        }
         if (d < 80 && best.first > d) {
             // std::cout << car << " " << i << " " << cars[car].x << " " << cars[i].x << " " << cars[car].speed << " " << cars[i].speed << " " << cars[car].extreme_stop_time << " " << cars[i].extreme_stop_time << std::endl; 
             best = {d, cars[i]};
@@ -54,11 +60,7 @@ int Manager::check_car (int x, int y) {
 }
 
 void Manager::stop_car (int id) {
-    cars[id].mem_acceleration = cars[id].acceleration;
     cars[id].speed = 0.05;
-    cars[id].click_stop_time = clock() + CLOCKS_PER_SEC / 30;
-    // std::cout << "STOPPED " << cars[id].click_stop_time << std::endl;
-    // exit(-1);
 }
 
 void Manager::process () {

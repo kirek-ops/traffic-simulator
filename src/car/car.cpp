@@ -128,18 +128,18 @@ bool Car::move () {
     switch (part_of_route) {
         case 0:
             x -= speed;
-            speed = speed + acceleration;
+            speed = std::max((float)0, speed + acceleration);
             break;
         case 1:
             omega = speed / Radius / pi * 180;
             rotation -= omega;
             x = cirX - (Radius + 20 + road * RoadWidth / 3) * std::cos((rotation - 180) / 180 * pi);
             y = cirY - (Radius + 20 + road * RoadWidth / 3) * std::sin((rotation - 180) / 180 * pi);
-            speed = speed + acceleration;
+            speed = std::max((float)0, speed + acceleration);
             break;
         case 2:
             x += speed;
-            speed = speed + acceleration;
+            speed = std::max((float)0, speed + acceleration);
             break;
         default:
             exit(-1);
@@ -151,10 +151,6 @@ bool Car::move () {
         acceleration = after_stop_acceleration;
         speed = *after_stop_speed;
         extreme_stop_time = -1;
-    }
-    if (clock() >= click_stop_time && click_stop_time != -1) {
-        acceleration = mem_acceleration;
-        click_stop_time = -1;
     }
 
     // change part of route
