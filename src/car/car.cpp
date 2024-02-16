@@ -37,10 +37,10 @@ Car::Car (sf::RenderWindow *_window, int _type, int _road, float _speed, float _
     y = cirY - Radius - 20 - road * RoadWidth / 3;
 }
 
-void Car::extreme_stop (double dist, Car car) {
-    double time = 2 * (65 - dist) / (car.speed - speed);
+void Car::extreme_stop (double dist, Car car, float coeff) {
+    double time = 2 * (65 - dist) / (car.speed * coeff - speed * coeff);
     if (time < 0.0000000001) return;
-    acceleration = (car.speed - speed) / time + car.acceleration;
+    acceleration = (car.speed * coeff - speed * coeff) / time + car.acceleration;
     // std::cout << "STOP!!!" << dist << " " << time << " " << acceleration << " " << speed << " " << car.speed << std::endl;
     extreme_stop_time = clock() + time;
     after_stop_acceleration = car.acceleration;
@@ -102,7 +102,7 @@ double Car::dist (const Car &other) { // 12345678 invalid result
     return result;
 } 
 
-bool Car::move () {
+bool Car::move (float coeff) {
     sf::Texture texture;
     try {
         if (!texture.loadFromFile("images/car1.png")) {
@@ -122,6 +122,9 @@ bool Car::move () {
     sprite.setRotation(rotation);
     
     window->draw(sprite);
+
+    float mem_local_speed = speed;
+    speed *= coeff;
 
     float omega;
 
@@ -144,6 +147,8 @@ bool Car::move () {
         default:
             exit(-1);
     }
+
+    speed = mem_local_speed;
 
     // std::cout << clock() << " " << x << " " << y << " " << speed << " " << acceleration << " " << part_of_route << " " << rotation << std::endl;
 

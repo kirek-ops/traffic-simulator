@@ -50,7 +50,7 @@ std::pair <double, Car> Manager::check_around (int car) {
     return best;
 }
 
-int Manager::check_car (int x, int y) {
+int Manager::check_car (float x, float y) {
     for (int i = 0; i < cars.size(); ++i) {
         if (abs(x - cars[i].x) < 25 && abs(y - cars[i].y) < 12) {
             return i;
@@ -60,7 +60,7 @@ int Manager::check_car (int x, int y) {
 }
 
 void Manager::stop_car (int id) {
-    cars[id].speed = 0.05;
+    cars[id].speed = 0.05 * coeff;
 }
 
 void Manager::process () {
@@ -91,11 +91,15 @@ void Manager::process () {
     for (int i = 0; i < cars.size(); ++i) {
         auto [d, car] = check_around(i);
         if (d < 80) {
-            cars[i].extreme_stop(d, car);
+            cars[i].extreme_stop(d, car, coeff);
         }
-        if (!cars[i].move()) {
+        if (!cars[i].move(coeff)) {
             cars.erase(cars.begin() + i, cars.begin() + i + 1);
             --i;
         }
     } 
+}
+
+void Manager::set_coeff (float _coeff) {
+    coeff = _coeff;
 }

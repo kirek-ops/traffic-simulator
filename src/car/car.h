@@ -28,8 +28,8 @@ class Car {
         Car ();
         Car (sf::RenderWindow *_window, int _type, int _road, float _speed, float _acceleration);
 
-        bool move ();
-        void extreme_stop (double dist, Car car);
+        bool move (float coeff);
+        void extreme_stop (double dist, Car car, float coeff);
         double dist (const Car &other);
 
         ~Car ();
