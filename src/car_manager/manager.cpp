@@ -23,7 +23,7 @@ void Manager::create (int road) {
 
     for (int i = 0; i < cars.size(); ++i) {
         if (cars[i].road != road) continue;
-        if (cars[i].dist(newCar) < 100) {
+        if (cars[i].dist(newCar) < 150) {
             return;
         }
     }
@@ -42,8 +42,7 @@ std::pair <double, Car> Manager::check_around (int car) {
         else {
             d = cars[car].dist(cars[i]);
         }
-        if (d < 80 && best.first > d) {
-            // std::cout << car << " " << i << " " << cars[car].x << " " << cars[i].x << " " << cars[car].speed << " " << cars[i].speed << " " << cars[car].extreme_stop_time << " " << cars[i].extreme_stop_time << std::endl; 
+        if (d < 100 && best.first > d) {
             best = {d, cars[i]};
         }
     }
@@ -60,12 +59,13 @@ int Manager::check_car (float x, float y) {
 }
 
 void Manager::stop_car (int id) {
-    cars[id].speed = 0.05 * coeff;
+    cars[id].speed = std::min(cars[id].speed, (float)0.05 * coeff);
 }
 
 void Manager::process () {
     std::time_t curTime = clock();
     
+    // testing two cars
     // static int ok = 0;
     // if (!lst_gen) {
     //     Car car (window, 0, 0, 0.1, 0.00001);
@@ -79,18 +79,14 @@ void Manager::process () {
     //     ok = 1;
     // }
 
-    if (!lst_gen || (float)(curTime - lst_gen) / CLOCKS_PER_SEC > 0.3) {
+    if (!lst_gen || (float)(curTime - lst_gen) / CLOCKS_PER_SEC > 0.4) {
         create(rand() % 3); 
         lst_gen = curTime;
     }
 
-    // if (cars.size() > 1) {
-    //     std::cout << cars[0].dist(cars[1]) << std::endl;
-    // }
-
     for (int i = 0; i < cars.size(); ++i) {
         auto [d, car] = check_around(i);
-        if (d < 80) {
+        if (d < 100) {
             cars[i].extreme_stop(d, car, coeff);
         }
         if (!cars[i].move(coeff)) {

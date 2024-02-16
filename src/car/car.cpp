@@ -41,7 +41,7 @@ void Car::extreme_stop (double dist, Car car, float coeff) {
     double time = 2 * (65 - dist) / (car.speed * coeff - speed * coeff);
     if (time < 0.0000000001) return;
     acceleration = (car.speed * coeff - speed * coeff) / time + car.acceleration;
-    // std::cout << "STOP!!!" << dist << " " << time << " " << acceleration << " " << speed << " " << car.speed << std::endl;
+    
     extreme_stop_time = clock() + time;
     after_stop_acceleration = car.acceleration;
     after_stop_speed = &car.speed;
@@ -149,8 +149,6 @@ bool Car::move (float coeff) {
     }
 
     speed = mem_local_speed;
-
-    // std::cout << clock() << " " << x << " " << y << " " << speed << " " << acceleration << " " << part_of_route << " " << rotation << std::endl;
 
     if (clock() >= extreme_stop_time && extreme_stop_time != -1) {
         acceleration = after_stop_acceleration;

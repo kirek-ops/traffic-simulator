@@ -29,7 +29,7 @@ int main () {
     sf::Sprite background (backgroundTexture);
 
     Manager manager (&window, clock());
-    Slider slider (&window, 0.1, 5);
+    Slider slider (&window, 0.1, 10);
 
     // Running
     while (window.isOpen()) {
@@ -57,8 +57,7 @@ int main () {
 
         slider.process();
         manager.set_coeff(slider.get_coeff());
-        // std::cout << slider.get_coeff() << std::endl;
-
+        
         window.clear();
 
         window.draw(background);
