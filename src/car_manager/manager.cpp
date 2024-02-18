@@ -31,10 +31,10 @@ void Manager::create (int road) {
     cars.push_back(newCar);
 }
 
-std::pair <double, Car> Manager::check_around (int car) {
+std::pair <double, Car> Manager::check_around (int car, int search_road) {
     std::pair <double, Car> best = {12345678, Car ()};
     for (int i = 0; i < cars.size(); ++i) { 
-        if (cars[i].road != cars[car].road || i == car) continue;
+        if (cars[i].road != search_road || i == car) continue;
         double d = 12345678;
         if (cars[car].speed > 0) {
             d = cars[i].dist(cars[car]);
@@ -43,10 +43,21 @@ std::pair <double, Car> Manager::check_around (int car) {
             d = cars[car].dist(cars[i]);
         }
         if (d < 100 && best.first > d) {
-            best = {d, cars[i]};
+            best = std::make_pair(d, cars[i]);
         }
     }
     return best;
+}
+
+bool Manager::check_change (int car, int search_road) {
+    std::pair <double, Car> best = {12345678, Car ()};
+    for (int i = 0; i < cars.size(); ++i) { 
+        if (cars[i].road != search_road || i == car) continue;
+        if (cars[i].dist(cars[car]) < 100 || cars[car].dist(cars[i]) < 20) {
+            return false;
+        }
+    }
+    return true;
 }
 
 int Manager::check_car (float x, float y) {
@@ -85,9 +96,35 @@ void Manager::process () {
     }
 
     for (int i = 0; i < cars.size(); ++i) {
-        auto [d, car] = check_around(i);
+        auto [d, car] = check_around(i, cars[i].road);
         if (d < 100) {
-            cars[i].extreme_stop(d, car, coeff);
+            if (cars[i].road == 0) {
+                if (check_change(i, 1) && (float)(clock() - cars[i].changed) / CLOCKS_PER_SEC > 0.2) {
+                    cars[i].change_road(1);
+                }
+                else {
+                    cars[i].extreme_stop(d, car, coeff);
+                }
+            }
+            else if (cars[i].road == 1 && (float)(clock() - cars[i].changed) / CLOCKS_PER_SEC > 0.2) {
+                if (check_change(i, 0)) {
+                    cars[i].change_road(0);
+                }
+                else if (check_change(i, 2) && (float)(clock() - cars[i].changed) / CLOCKS_PER_SEC > 0.2) {
+                    cars[i].change_road(2);
+                }
+                else {
+                    cars[i].extreme_stop(d, car, coeff);
+                }
+            }
+            else {
+                if (check_change(i, 1) && (float)(clock() - cars[i].changed) / CLOCKS_PER_SEC > 0.2) {
+                    cars[i].change_road(1);
+                }
+                else {
+                    cars[i].extreme_stop(d, car, coeff);
+                }
+            }
         }
         if (!cars[i].move(coeff)) {
             cars.erase(cars.begin() + i, cars.begin() + i + 1);

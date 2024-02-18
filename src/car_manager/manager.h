@@ -16,7 +16,8 @@ class Manager {
         Manager (sf::RenderWindow *_window, time_t _start);
         void create (int road);
         void process ();
-        std::pair <double, Car> check_around (int car);
+        std::pair <double, Car> check_around (int car, int search_road);
+        bool check_change (int car, int search_road);
         int check_car (float x, float y);
         void stop_car (int id);
         void set_coeff (float coeff);

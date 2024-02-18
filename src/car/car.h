@@ -14,8 +14,14 @@ class Car {
                            //  1 = half circle
                            //  2 = bottom straight
 
-        bool smooth_change_road;
+        bool smooth_change_road = 0;
         int to_road;
+        int rotate_iter = 1;
+        float rotate = 30.0 / rotate_iter; 
+        int iters = 0;
+        int cur_rotation_type = -1;    // 0 - increase angle
+                                       // 1 - decrease angle
+        time_t changed;
 
         time_t extreme_stop_time = -1;
         float after_stop_acceleration;
@@ -31,6 +37,7 @@ class Car {
         bool move (float coeff);
         void extreme_stop (double dist, Car car, float coeff);
         double dist (const Car &other);
+        void change_road (int road);
 
         ~Car ();
 

@@ -24,6 +24,8 @@ Car::Car (sf::RenderWindow *_window, int _type, int _road, float _speed, float _
     window = _window;
     rotation = 270;
     smooth_change_road = 0; to_road = -1;
+    rotate_iter = 1;
+    changed = 0;
 
     Radius = (int)(window->getSize().x / 8);
     cirX = (int)(window->getSize().x / 4);
@@ -101,6 +103,14 @@ double Car::dist (const Car &other) { // 12345678 invalid result
     }
     return result;
 } 
+ 
+void Car::change_road (int target_road) {
+    to_road = target_road;
+    smooth_change_road = 1;
+    
+    cur_rotation_type = 0;
+    iters = rotate_iter;
+}
 
 bool Car::move (float coeff) {
     sf::Texture texture;
@@ -127,6 +137,18 @@ bool Car::move (float coeff) {
     speed *= coeff;
 
     float omega;
+
+
+    if (smooth_change_road) {
+        smooth_change_road = 0;
+        road = to_road;
+        cur_rotation_type = -1;
+        
+        if (part_of_route == 0) y = cirY - Radius - 20 - road * RoadWidth / 3;
+        if (part_of_route == 2) y = cirY - Radius - 20 - road * RoadWidth / 3;
+
+        changed = clock();
+    }
 
     switch (part_of_route) {
         case 0:
