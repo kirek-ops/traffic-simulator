@@ -26,7 +26,7 @@ Car::Car (sf::RenderWindow *_window, int _type, int _road, float _speed, float _
     smooth_change_road = 0; to_road = -1;
     rotate_iter = 500;
     changed = -CLOCKS_PER_SEC;
-    xystep = 0;
+    rstep = 0;
 
     Radius = (int)(window->getSize().x / 8);
     cirX = (int)(window->getSize().x / 4);
@@ -105,14 +105,13 @@ double Car::dist (const Car &other) { // 12345678 invalid result
 } 
  
 void Car::change_road (int target_road, float coeff) {
-    rotate_iter = 60 / coeff;
+    rotate_iter = 60 / coeff / (speed / 0.1);
     to_road = target_road;
     smooth_change_road = 1;
     iters_r = rotate_iter;
-    iters_y = rotate_iter * 2;
-    xystep = (float)RoadWidth / 3 / iters_y * (to_road > road ? -1 : +1);
+    rstep = 1.0 / (rotate_iter * 2) * (to_road > road ? +1 : -1);
     cur_rotation_type = 0;
-    rotate = 20.0 / rotate_iter / coeff * (to_road > road ? -1 : +1);;
+    rotate = 20.0 / rotate_iter / coeff * (to_road > road ? +1 : -1);
 
     changed = clock();
 }
@@ -163,19 +162,10 @@ bool Car::move (float coeff) {
                 smooth_change_road = 0;
                 road = to_road;
 
-                if (part_of_route == 0) {
-                    y = cirY - Radius - 20 - road * RoadWidth / 3;
-                }
-                if (part_of_route == 1) {
-                    x = cirX - (Radius + 20 + road * RoadWidth / 3) * std::cos((rotation - 180) / 180 * pi);
-                    y = cirY - (Radius + 20 + road * RoadWidth / 3) * std::sin((rotation - 180) / 180 * pi);
-                }
-                if (part_of_route == 2) {
-                    y = cirY + Radius + 20 + road * RoadWidth / 3;
-                }
+                iters_r = 0;
 
-                speed = std::max(0.15, 0.2 * speed);
-                xystep = 0;
+                speed = std::max(0.15, 0.3 * speed);
+                rstep = 0;
             }
         }
     }
@@ -183,24 +173,23 @@ bool Car::move (float coeff) {
     switch (part_of_route) {
         case 0:
             x -= speed;
+            y = cirY - Radius - 20 - road * RoadWidth / 3;
             speed = std::max((float)0, speed + acceleration);
-            if (smooth_change_road) {
-                y += xystep;
-            }
+            road += rstep;
             break;
         case 1:
             omega = speed / Radius / pi * 180;
             rotation -= omega;
             x = cirX - (Radius + 20 + road * RoadWidth / 3) * std::cos((rotation - 180) / 180 * pi);
             y = cirY - (Radius + 20 + road * RoadWidth / 3) * std::sin((rotation - 180) / 180 * pi);
+            road += rstep;
             speed = std::max((float)0, speed + acceleration);
             break;
         case 2:
             x += speed;
+            y = cirY + Radius + 20 + road * RoadWidth / 3;
             speed = std::max((float)0, speed + acceleration);
-            if (smooth_change_road) {
-                y -= xystep;
-            }
+            road += rstep;
             break;
         default:
             exit(-1);
@@ -227,6 +216,7 @@ bool Car::move (float coeff) {
     }
     else if (x > cirX && y > cirY && part_of_route != 2) {
         part_of_route = 2;
+        rotation = 90;
     }
     else if (x > window->getSize().x) {
         part_of_route = -1;
