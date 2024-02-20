@@ -16,9 +16,10 @@ class Car {
 
         bool smooth_change_road = 0;
         int to_road;
-        int rotate_iter = 1;
+        int rotate_iter = 10000;
         float rotate = 30.0 / rotate_iter; 
-        int iters = 0;
+        float xystep;
+        int iters_r = 0, iters_y = 0;
         int cur_rotation_type = -1;    // 0 - increase angle
                                        // 1 - decrease angle
         time_t changed;
@@ -30,6 +31,10 @@ class Car {
         time_t click_stop_time = -1;
         float mem_acceleration;
 
+        float MAX_SPEED = 0.5;
+
+        time_t stoped_car = -1;
+
     public:
         Car ();
         Car (sf::RenderWindow *_window, int _type, int _road, float _speed, float _acceleration);
@@ -37,7 +42,7 @@ class Car {
         bool move (float coeff);
         void extreme_stop (double dist, Car car, float coeff);
         double dist (const Car &other);
-        void change_road (int road);
+        void change_road (int road, float coeff);
 
         ~Car ();
 

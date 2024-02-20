@@ -61,8 +61,10 @@ void Slider::turn_on (sf::Vector2f xy) {
 }
 
 void Slider::turn_off () {
-    isDragging = false;
-    std::cout << "turned off\n";
+    if (isDragging) {
+        isDragging = false;
+        std::cout << "turned off\n";
+    }
 }
 
 void Slider::draw () {
