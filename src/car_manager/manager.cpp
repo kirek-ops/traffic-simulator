@@ -17,7 +17,7 @@ Manager::Manager (sf::RenderWindow *_window, time_t _start) {
 void Manager::create (int road) {
     std::uniform_real_distribution <double> dist (0.1, 0.3);
     double speed0 = dist(gen); 
-    double acceleration = 0.00003;
+    double acceleration = 0.0002;
 
     Car newCar (window, 0, road, speed0, acceleration);
 
@@ -34,16 +34,18 @@ void Manager::create (int road) {
 std::pair <double, Car> Manager::check_around (int car, int search_road) {
     std::pair <double, Car> best = {12345678, Car ()};
     for (int i = 0; i < cars.size(); ++i) { 
-        if (cars[i].road != search_road || i == car) continue;
-        double d = 12345678;
-        if (cars[car].speed > 0) {
-            d = cars[i].dist(cars[car]);
-        }
-        else {
-            d = cars[car].dist(cars[i]);
-        }
-        if (d < 100 && best.first > d) {
-            best = std::make_pair(d, cars[i]);
+        if (i == car) continue;
+        if ((cars[i].road == search_road && !cars[i].smooth_change_road) || (cars[i].smooth_change_road && cars[i].to_road == search_road)) {
+            double d = 12345678;
+            if (cars[car].speed > 0) {
+                d = cars[i].dist(cars[car]);
+            }
+            else {
+                d = cars[car].dist(cars[i]);
+            }
+            if (d < 100 && best.first > d) {
+                best = std::make_pair(d, cars[i]);
+            }
         }
     }
     return best;
@@ -52,9 +54,11 @@ std::pair <double, Car> Manager::check_around (int car, int search_road) {
 bool Manager::check_change (int car, int search_road) {
     std::pair <double, Car> best = {12345678, Car ()};
     for (int i = 0; i < cars.size(); ++i) { 
-        if (cars[i].road != search_road || i == car) continue;
-        if (cars[i].dist(cars[car]) < 100 || cars[car].dist(cars[i]) < 20) {
-            return false;
+        if (i == car) continue;
+        if ((cars[i].road == search_road && !cars[i].smooth_change_road) || (cars[i].smooth_change_road && cars[i].to_road == search_road)) {
+            if (cars[i].dist(cars[car]) < 100 || cars[car].dist(cars[i]) < 70) {
+                return false;
+            }
         }
     }
     return true;
@@ -70,7 +74,9 @@ int Manager::check_car (float x, float y) {
 }
 
 void Manager::stop_car (int id) {
-    cars[id].speed = std::min(cars[id].speed, (float)0.05 * coeff);
+    cars[id].speed = std::min(cars[id].speed, (float)0.05);
+    cars[id].acceleration = 0;
+    cars[id].stoped_car = clock() + CLOCKS_PER_SEC * 2;
 }
 
 void Manager::process () {
@@ -83,7 +89,7 @@ void Manager::process () {
     //     cars.push_back(car);
     //     lst_gen = curTime;
     // }
-    // else if ((float)(curTime - lst_gen) / CLOCKS_PER_SEC > 0.6 && !ok) {
+    // else if ((float)(curTime - lst_gen) / CLOCKS_PER_SEC > 1 && !ok) {
     //     Car car (window, 0, 0, 0.2, 0.00001);
     //     cars.push_back(car);
     //     lst_gen = curTime;
@@ -97,32 +103,34 @@ void Manager::process () {
 
     for (int i = 0; i < cars.size(); ++i) {
         auto [d, car] = check_around(i, cars[i].road);
-        if (d < 100) {
-            if (cars[i].road == 0) {
-                if (check_change(i, 1) && (float)(clock() - cars[i].changed) / CLOCKS_PER_SEC > 0.2) {
-                    cars[i].change_road(1);
+        if (d < 150) {
+            if (!cars[i].smooth_change_road) {
+                if (cars[i].road == 0) {
+                    if (check_change(i, 1)) {
+                        cars[i].change_road(1, coeff);
+                    }
+                    else {
+                        cars[i].extreme_stop(d, car, coeff);
+                    }
+                }
+                else if (cars[i].road == 1) {
+                    if (check_change(i, 0)) {
+                        cars[i].change_road(0, coeff);
+                    }
+                    else if (check_change(i, 2)) {
+                        cars[i].change_road(2, coeff);
+                    }
+                    else {
+                        cars[i].extreme_stop(d, car, coeff);
+                    }
                 }
                 else {
-                    cars[i].extreme_stop(d, car, coeff);
-                }
-            }
-            else if (cars[i].road == 1 && (float)(clock() - cars[i].changed) / CLOCKS_PER_SEC > 0.2) {
-                if (check_change(i, 0)) {
-                    cars[i].change_road(0);
-                }
-                else if (check_change(i, 2) && (float)(clock() - cars[i].changed) / CLOCKS_PER_SEC > 0.2) {
-                    cars[i].change_road(2);
-                }
-                else {
-                    cars[i].extreme_stop(d, car, coeff);
-                }
-            }
-            else {
-                if (check_change(i, 1) && (float)(clock() - cars[i].changed) / CLOCKS_PER_SEC > 0.2) {
-                    cars[i].change_road(1);
-                }
-                else {
-                    cars[i].extreme_stop(d, car, coeff);
+                    if (check_change(i, 1)) {
+                        cars[i].change_road(1, coeff);
+                    }
+                    else {
+                        cars[i].extreme_stop(d, car, coeff);
+                    }
                 }
             }
         }
