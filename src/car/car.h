@@ -20,8 +20,10 @@ class Car {
         float rotate = 30.0 / rotate_iter; 
         float rstep;
         int iters_r = 0;
+        float add_rotation;
         int cur_rotation_type = -1;    // 0 - increase angle
                                        // 1 - decrease angle
+        int lst_road = -1;
         time_t changed;
 
         time_t extreme_stop_time = -1;
