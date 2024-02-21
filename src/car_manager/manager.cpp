@@ -51,17 +51,19 @@ std::pair <double, Car> Manager::check_around (int car, int search_road) {
     return best;
 }
 
-bool Manager::check_change (int car, int search_road) {
-    std::pair <double, Car> best = {12345678, Car ()};
+float Manager::check_change (int car, int search_road) {
+    float result = 12345678;
     for (int i = 0; i < cars.size(); ++i) { 
         if (i == car) continue;
         if ((cars[i].road == search_road && !cars[i].smooth_change_road) || (cars[i].smooth_change_road && cars[i].to_road == search_road)) {
-            if (cars[i].dist(cars[car]) < 100 || cars[car].dist(cars[i]) < 70) {
-                return false;
+            float dist = cars[i].dist(cars[car]);
+            if (dist < 80 || cars[car].dist(cars[i]) < 70) {
+                return -1;
             }
+            if (result > dist) result = dist;
         }
     }
-    return true;
+    return result;
 }
 
 int Manager::check_car (float x, float y) {
@@ -103,10 +105,11 @@ void Manager::process () {
 
     for (int i = 0; i < cars.size(); ++i) {
         auto [d, car] = check_around(i, cars[i].road);
-        if (d < 150) {
+        if (d < 100) {
             if (!cars[i].smooth_change_road) {
                 if (cars[i].road == 0) {
-                    if (check_change(i, 1)) {
+                    float dist = check_change(i, 1);
+                    if (dist != -1) {
                         cars[i].change_road(1, coeff);
                     }
                     else {
@@ -114,10 +117,19 @@ void Manager::process () {
                     }
                 }
                 else if (cars[i].road == 1) {
-                    if (check_change(i, 0)) {
+                    float dist0 = check_change(i, 0);
+                    float dist2 = check_change(i, 2);
+
+                    if (cars[i].lst_road == 0 && dist2 != -1) {
+                        cars[i].change_road(2, coeff);
+                    }
+                    else if (cars[i].lst_road == 2 && dist0 != -1) {
                         cars[i].change_road(0, coeff);
                     }
-                    else if (check_change(i, 2)) {
+                    else if (dist0 != -1) {
+                        cars[i].change_road(0, coeff);
+                    }
+                    else if (dist2 != -1) {
                         cars[i].change_road(2, coeff);
                     }
                     else {
@@ -125,7 +137,8 @@ void Manager::process () {
                     }
                 }
                 else {
-                    if (check_change(i, 1)) {
+                    float dist = check_change(i, 1);
+                    if (dist != -1) {
                         cars[i].change_road(1, coeff);
                     }
                     else {

@@ -57,13 +57,11 @@ void Slider::process () {
 void Slider::turn_on (sf::Vector2f xy) {
     isDragging = true;
     prevMousePos = xy;
-    std::cout << "turned on\n";
 }
 
 void Slider::turn_off () {
     if (isDragging) {
         isDragging = false;
-        std::cout << "turned off\n";
     }
 }
 
