@@ -1,52 +1,41 @@
-#pragma once
+#ifndef CAR_H
+#define CAR_H
+
 #include <SFML/Graphics.hpp>
+#include <thread>
+#include <mutex>
+#include <memory>
 
 class Car {
-    private:
-        float road;
-        float speed, acceleration;
-        float x, y;
-        sf::RenderWindow *window;
-        float rotation;
+private:
+    void move ();
 
-        int part_of_route; // -1 = undefined
-                           //  0 = top straight
-                           //  1 = half circle
-                           //  2 = bottom straight
+    sf::RectangleShape shape;
+    float x, y;
+    float speed;
+    bool moving;
+    std::thread moveThread;
+    std::mutex carMutex;
+public:
+    Car(float x, float y, float speed);
 
-        bool smooth_change_road = 0;
-        int to_road;
-        int rotate_iter = 10000;
-        float rotate = 30.0 / rotate_iter; 
-        float rstep;
-        int iters_r = 0;
-        float add_rotation;
-        int cur_rotation_type = -1;    // 0 - increase angle
-                                       // 1 - decrease angle
-        int lst_road = -1;
-        time_t changed;
+    void update ();
+    void render (sf::RenderWindow &window);
+    bool isClicked (const sf::Vector2i &mousePos);
 
-        time_t extreme_stop_time = -1;
-        float after_stop_acceleration;
-        float *after_stop_speed;
+    void start ();
+    void stop ();
 
-        time_t click_stop_time = -1;
-        float mem_acceleration;
+    void startThread ();
+    void stopThread ();
 
-        float MAX_SPEED = 0.5;
+    bool isMoving () const { return moving; }
 
-        time_t stoped_car = -1;
-
-    public:
-        Car ();
-        Car (sf::RenderWindow *_window, int _type, int _road, float _speed, float _acceleration);
-
-        bool move (float coeff);
-        void extreme_stop (double dist, Car car, float coeff);
-        double dist (const Car &other);
-        void change_road (int road, float coeff);
-
-        ~Car ();
-
-    friend class Manager;
+    // Disable copying and moving of the Car
+    Car (const Car &) = delete;
+    Car & operator = (const Car &) = delete;
+    Car (Car &&) = delete;
+    Car & operator = (Car &&) = delete;
 };
+
+#endif

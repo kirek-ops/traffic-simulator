@@ -1,24 +1,18 @@
-#include <SFML/Graphics.hpp>
-#include "../car/car.h"
+#ifndef MANAGER_H
+#define MANAGER_H
+
 #include <vector>
-#include <chrono>
-#include <ctime>
+#include <memory>
+#include "../car/car.h"
 
 class Manager {
-    private:
-        sf::RenderWindow *window;
-        std::vector <Car> cars;
-        time_t start;
-        time_t lst_gen = 0;
-        float coeff;
-
-    public:
-        Manager (sf::RenderWindow *_window, time_t _start);
-        void create (int road);
-        void process ();
-        std::pair <double, Car> check_around (int car, int search_road);
-        float check_change (int car, int search_road);
-        int check_car (float x, float y);
-        void stop_car (int id);
-        void set_coeff (float coeff);
+private:
+    std::vector <std::unique_ptr <Car>> cars;
+public:
+    Manager();
+    void update ();
+    void render (sf::RenderWindow &window);
+    void checkClick (const sf::Vector2i &mousePos);
 };
+
+#endif

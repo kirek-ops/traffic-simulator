@@ -3,7 +3,7 @@
 #include <iostream>
 #include <chrono>
 #include <ctime>
-
+z
 // #include "grass/grass.h"
 // #include "route/route.h"
 
@@ -57,7 +57,7 @@ int main () {
 
         slider.process();
         manager.set_coeff(slider.get_coeff());
-        
+
         window.clear();
 
         window.draw(background);
