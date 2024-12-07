@@ -16,6 +16,7 @@ private:
     bool moving;
     std::thread moveThread;
     std::mutex carMutex;
+
 public:
     Car(float x, float y, float speed);
 
